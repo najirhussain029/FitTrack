@@ -1,0 +1,40 @@
+package com.mycompany.fitnessmanagementsystemgui;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FitnessManagement {
+
+    private List<Member> members;
+
+    public FitnessManagement() {
+        members = new ArrayList<>();
+    }
+
+    public void addMember(Member member) {
+        members.add(member);
+    }
+
+    public List<Member> getAllMembers() {
+        return members;
+    }
+
+    public void updateMember(int index, Member updatedMember) {
+        if (index >= 0 && index < members.size()) {
+            members.set(index, updatedMember);
+        }
+    }
+
+    public void deleteMember(int index) {
+        if (index >= 0 && index < members.size()) {
+            members.remove(index);
+        }
+    }
+
+    public double calculateMemberBMI(int index) {
+        if (index >= 0 && index < members.size()) {
+            return members.get(index).calculateBMI();
+        }
+        return -1;
+    }
+}
