@@ -1,0 +1,170 @@
+package com.mycompany.fitnessmanagementsystemgui;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+public class c extends JFrame {
+
+    private FitnessManagement fitnessManagement;
+    private JTextArea displayArea;
+    private JTextField nameField, ageField, weightField, heightField, goalField;
+    private JComboBox<String> genderComboBox;
+
+    public FitnessTreakGUI() {
+        fitnessManagement = new FitnessManagement();
+        initializeGUI();
+    }
+
+    private void initializeGUI() {
+        setTitle("Fitness Management System");
+        setSize(600, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        JPanel inputPanel = new JPanel(new GridLayout(6, 2));
+        inputPanel.add(new JLabel("Name:"));
+        nameField = new JTextField();
+        inputPanel.add(nameField);
+
+        inputPanel.add(new JLabel("Age:"));
+        ageField = new JTextField();
+        inputPanel.add(ageField);
+
+        inputPanel.add(new JLabel("Weight (kg):"));
+        weightField = new JTextField();
+        inputPanel.add(weightField);
+
+        inputPanel.add(new JLabel("Height (m):"));
+        heightField = new JTextField();
+        inputPanel.add(heightField);
+
+        inputPanel.add(new JLabel("Gender:"));
+        String[] genders = {"Male", "Female"};
+        genderComboBox = new JComboBox<>(genders);
+        inputPanel.add(genderComboBox);
+
+        inputPanel.add(new JLabel("Fitness Goal:"));
+        goalField = new JTextField();
+        inputPanel.add(goalField);
+
+        JButton addButton = new JButton("Add Member");
+        JButton viewButton = new JButton("View Members");
+        JButton updateButton = new JButton("Update Member");
+        JButton deleteButton = new JButton("Delete Member");
+        JButton calculateBMIButton = new JButton("Calculate BMI");
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(addButton);
+        buttonPanel.add(viewButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(calculateBMIButton);
+
+        displayArea = new JTextArea();
+        displayArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(displayArea);
+
+        add(inputPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addMember();
+            }
+        });
+
+        viewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewMembers();
+            }
+        });
+
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateMember();
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteMember();
+            }
+        });
+
+        calculateBMIButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calculateBMI();
+            }
+        });
+    }
+
+    private void addMember() {
+        String name = nameField.getText();
+        int age = Integer.parseInt(ageField.getText());
+        double weight = Double.parseDouble(weightField.getText());
+        double height = Double.parseDouble(heightField.getText());
+        String gender = (String) genderComboBox.getSelectedItem();
+        String goal = goalField.getText();
+
+        Member member = new Member(name, age, weight, height, gender, goal);
+        fitnessManagement.addMember(member);
+        displayArea.setText("Member added successfully!");
+    }
+
+    private void viewMembers() {
+        List<Member> members = fitnessManagement.getAllMembers();
+        StringBuilder sb = new StringBuilder();
+        for (Member member : members) {
+            sb.append(member.toString()).append("\n");
+        }
+        displayArea.setText(sb.toString());
+    }
+
+    private void updateMember() {
+        int index = Integer.parseInt(JOptionPane.showInputDialog("Enter member index to update:"));
+        String name = nameField.getText();
+        int age = Integer.parseInt(ageField.getText());
+        double weight = Double.parseDouble(weightField.getText());
+        double height = Double.parseDouble(heightField.getText());
+        String gender = (String) genderComboBox.getSelectedItem();
+        String goal = goalField.getText();
+
+        Member updatedMember = new Member(name, age, weight, height, gender, goal);
+        fitnessManagement.updateMember(index, updatedMember);
+        displayArea.setText("Member updated successfully!");
+    }
+
+    private void deleteMember() {
+        int index = Integer.parseInt(JOptionPane.showInputDialog("Enter member index to delete:"));
+        fitnessManagement.deleteMember(index);
+        displayArea.setText("Member deleted successfully!");
+    }
+
+    private void calculateBMI() {
+        int index = Integer.parseInt(JOptionPane.showInputDialog("Enter member index to calculate BMI:"));
+        double bmi = fitnessManagement.calculateMemberBMI(index);
+        if (bmi != -1) {
+            displayArea.setText("BMI: " + bmi);
+        } else {
+            displayArea.setText("Invalid index!");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new FitnessTreakGUI().setVisible(true);
+            }
+        });
+    }
+}
