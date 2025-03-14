@@ -33,8 +33,8 @@ class FitnessManagementTest {
         fitnessManagement.updateMember(0, updatedMember);
 
         List<Member> members = fitnessManagement.getAllMembers();
-        assertEquals(26, members.get(0).getAge());
-        assertEquals(71.0, members.get(0).getWeight());
+        assertEquals(26, members.get(0).getName());
+        assertEquals(71.0, members.get(0).getName());
     }
 
     @Test
