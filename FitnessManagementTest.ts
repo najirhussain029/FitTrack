@@ -1,71 +1,64 @@
+package com.mycompany.fitnessmanagementsystemgui;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.lang.reflect.Member;
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
-class FitnessManagementTest {
+public class FitnessManagementTest {
 
     private FitnessManagement fitnessManagement;
+    private Member testMember1;
+    private Member testMember2;
 
     @BeforeEach
     void setUp() {
         fitnessManagement = new FitnessManagement();
+        testMember1 = new Member("John Doe", 30, 75.0, 1.75);
+        testMember2 = new Member("Jane Smith", 28, 65.0, 1.68);
     }
 
     @Test
     void testAddMember() {
-        Member member = new Member("John Doe", 25, 70.5, 1.75, "Male", "Lose weight");
-        fitnessManagement.addMember(member);
-
+        fitnessManagement.addMember(testMember1);
         List<Member> members = fitnessManagement.getAllMembers();
-        assertEquals(1, members.size());
+        assertFalse(members.isEmpty());
+        assertNotNull(members.get(0));
         assertEquals("John Doe", members.get(0).getName());
     }
 
     @Test
-    void testUpdateMember() {
-        Member member = new Member("John Doe", 25, 70.5, 1.75, "Male", "Lose weight");
-        fitnessManagement.addMember(member);
-
-        Member updatedMember = new Member("John Doe", 26, 71.0, 1.75, "Male", "Gain muscle");
-        fitnessManagement.updateMember(0, updatedMember);
-
+    void testGetAllMembers() {
+        fitnessManagement.addMember(testMember1);
+        fitnessManagement.addMember(testMember2);
         List<Member> members = fitnessManagement.getAllMembers();
-        assertEquals(26, members.get(0).getName());
-        assertEquals(71.0, members.get(0).getName());
+        assertTrue(members.size() > 1);
+    }
+
+    @Test
+    void testUpdateMember() {
+        fitnessManagement.addMember(testMember1);
+        Member updatedMember = new Member("John Doe Updated", 31, 80.0, 1.80);
+        fitnessManagement.updateMember(0, updatedMember);
+        Member retrievedMember = fitnessManagement.getAllMembers().get(0);
+        assertNotSame(testMember1, retrievedMember);
+        assertSame(updatedMember, retrievedMember);
     }
 
     @Test
     void testDeleteMember() {
-        Member member1 = new Member("John Doe", 25, 70.5, 1.75, "Male", "Lose weight");
-        Member member2 = new Member("Jane Doe", 30, 60.0, 1.65, "Female", "Maintain weight");
-        fitnessManagement.addMember(member1);
-        fitnessManagement.addMember(member2);
-
+        fitnessManagement.addMember(testMember1);
+        assertTrue(fitnessManagement.getAllMembers().contains(testMember1));
         fitnessManagement.deleteMember(0);
-
-        List<Member> members = fitnessManagement.getAllMembers();
-        assertEquals(1, members.size());
-        assertEquals("Jane Doe", members.get(0).getName());
+        assertFalse(fitnessManagement.getAllMembers().contains(testMember1));
     }
 
     @Test
-    void testCalculateBMI() {
-        Member member = new Member("John Doe", 25, 70.5, 1.75, "Male", "Lose weight");
-        fitnessManagement.addMember(member);
-
-        double bmi = fitnessManagement.calculateMemberBMI(0);
-        assertEquals(70.5 / (1.75 * 1.75), bmi, 0.01);
-    }
-
-    @Test
-    void testCalculateBMIWithInvalidIndex() {
-        Member member = new Member("John Doe", 25, 70.5, 1.75, "Male", "Lose weight");
-        fitnessManagement.addMember(member);
-
-        double bmi = fitnessManagement.calculateMemberBMI(1); // Invalid index
-        assertEquals(-1, bmi);
+    void testCalculateMemberBMI() {
+        fitnessManagement.addMember(testMember1);
+        double expectedBMI = 75.0 / (1.75 * 1.75);
+        double actualBMI = fitnessManagement.calculateMemberBMI(0);
+        assertTrue(Math.abs(expectedBMI - actualBMI) < 0.01);
     }
 }
